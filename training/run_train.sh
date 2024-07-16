@@ -30,7 +30,7 @@ OUTPUT_CSV="training_info.csv"            # CSV file to save training informatio
 NUM_CLASSES=24                            # Number of output classes
 MAX_ITERATIONS=30000                      # Maximum number of training iterations
 EVAL_NUM=500                              # Frequency of model evaluation
-NUM_SAMPLES=4                             # Number of samples for evaluation
+NUM_SAMPLES=1                             # Number of samples for evaluation
 
 # Execution
 # ---------

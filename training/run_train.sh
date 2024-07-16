@@ -1,5 +1,5 @@
 #!/bin/bash
-module load conda
+# module load conda
 # # Check if the AortaSeg24 environment exists
 # if conda info --envs | grep AortaSeg24_Challenge; then
 #     conda activate AortaSeg24_Challenge

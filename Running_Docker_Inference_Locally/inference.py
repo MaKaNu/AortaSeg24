@@ -21,16 +21,16 @@ from pathlib import Path
 
 from glob import glob
 import SimpleITK
-import numpy
 
 import torch
 from monai.transforms import ScaleIntensityRange
 from monai.networks.nets import UNet
+from monai.networks.nets import SwinUNETR
 from monai.inferers import sliding_window_inference
 import numpy as np
 import gc, os
 
-from .resources.SkipSwinNet_v2 import SkipSwinNet
+# from .resources.SkipSwinNet_v2 import SkipSwinNet
 # from resources.SkipSwinNet_v2 import SkipSwinNet
 
 
@@ -55,7 +55,7 @@ def run():
     # Set the environment variable to handle memory fragmentation
     os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
     
-    saved_model_path = RESOURCE_PATH / "your_best_model.pth"
+    saved_model_path = RESOURCE_PATH / "epoch_40_metric_model.pth"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
     
@@ -64,15 +64,24 @@ def run():
     image = transform(image).numpy()
     image = torch.from_numpy(image).permute(2, 1, 0).unsqueeze(0).unsqueeze(0)
 
-    patch_size = 48
-    spatial_dims=3 
+    patch_size = 128
+    # spatial_dims=3 
     num_classes=24
-    model = UNet(spatial_dims=spatial_dims, 
-                 in_channels=1, 
-                 out_channels=num_classes, 
-                 channels=(32, 64, 128,256), 
-                 strides=(2,2,2), 
-                 num_res_units=2)
+    feature_size = 96
+    #model = UNet(spatial_dims=spatial_dims, 
+    #             in_channels=1, 
+    #             out_channels=num_classes, 
+    #             channels=(32, 64, 128,256), 
+    #             strides=(2,2,2), 
+    #             num_res_units=2)
+    #
+    model = SwinUNETR(
+        img_size=(patch_size, patch_size, patch_size),
+        in_channels=1,
+        out_channels=num_classes,
+        feature_size=feature_size,
+        use_checkpoint=True,
+    )
     # Load the saved model state dict
     state_dict = torch.load(saved_model_path, map_location='cpu')
     model.load_state_dict(state_dict)

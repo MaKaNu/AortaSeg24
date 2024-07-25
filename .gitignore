@@ -22,3 +22,10 @@ rad.json
 TestResults.xml
 
 .venv
+
+*.mha
+*.pth
+
+__pycache__/
+
+cufile.log
